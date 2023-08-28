@@ -25,3 +25,5 @@ def log_level_console():
 def log_level_file():
     return os.getenv('LOG_LEVEL_FILE', log_level())
 
+def tg_bot_token():
+    return os.getenv('TELEGRAM_BOT_TOKEN')

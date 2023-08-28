@@ -11,11 +11,13 @@ if not __package__ and not hasattr(sys, "frozen"):
     sys.path.insert(0, os.path.realpath(central_root))
 
 from central.notif import notifier
+from central.telegram import tg_bot
 
 
 async def main():
     await asyncio.gather(
-        notifier.start()
+        notifier.start(),
+        tg_bot.start()
     )
 
 
