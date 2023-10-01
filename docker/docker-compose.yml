@@ -2,7 +2,5 @@ services:
   redis:
     image: redis:7.2.0-alpine
     container_name: central_redis
-    profiles:
-      - dev
     ports:
       - '6379:6379'

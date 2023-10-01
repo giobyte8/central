@@ -84,8 +84,8 @@ async def poll_updates(on_message: Callable[[TGMessage], Awaitable]):
 
         for update in updates:
             update_id = update['update_id']
-            logger.info('Update received: %s', update_id)
-            logger.debug('Update body: %s', update)
+            logger.info(' TG Update received: %s', update_id)
+            logger.debug('TG Update body: %s', update)
 
             # Update highest received update id
             highest_received_update = max(highest_received_update, update_id)

@@ -6,7 +6,7 @@
 
 # ref: https://stackoverflow.com/a/4774063/3211029
 PARENT_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
-SHELLC_PATH="${PWD}"
+CURRENT_PATH="${PWD}"
 
 # Eval '.env' file to read variables
 cd "${PARENT_PATH}"
@@ -26,4 +26,4 @@ docker run -it --rm             \
         $QUEUE_NOTIFICATIONS    \
         "{\"title\": \"Borgmatic\", \"content\": \"Backup is complete\"}"
 
-cd $SHELLC_PATH
+cd $CURRENT_PATH
