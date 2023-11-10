@@ -1,0 +1,57 @@
+
+openapi: 3.0.0
+info:
+  title: Central API
+  version: 1.0.0
+servers:
+  - url: http://localhost:6000/api
+    description: Development Server
+paths:
+  /hosts/{host_id}/status:
+    post:
+      summary: Records current host status
+      description: |
+        Records current host status of several variables and metrics
+      parameters:
+        - name: host_id
+          in: path
+          required: true
+          description: The UUID4 of the host.
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: Host Status data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HostStatus'
+            examples:
+              example1:
+                summary: Minimal host status example
+                value:
+                  uptime: "3 days, 2 hours, 15 minutes"
+                  ip: "192.168.1.100"
+      responses:
+        '204':
+          description: Successful operation
+        '400':
+          description: Bad request. Invalid data provided.
+        '404':
+          description: Host not found
+components:
+  schemas:
+    HostStatus:
+      type: object
+      required:
+        - uptime
+        - ip
+      properties:
+        uptime:
+          type: string
+          description: The amount of time the system has been running.
+        ip:
+          type: string
+          format: ipv4
+          description: External IPv4 address for the host.

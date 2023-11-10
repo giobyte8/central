@@ -4,5 +4,7 @@ venv
 .env
 
 .vscode
+.DS_Store
 
 data.dev/
+scripts/codegen
