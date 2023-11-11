@@ -1,3 +1,5 @@
+
+# All options: https://pycqa.github.io/isort/docs/configuration/options.html
 [tool.isort]
 profile = "black"
 
