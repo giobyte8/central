@@ -1,0 +1,5 @@
+[tool.isort]
+profile = "black"
+
+# Removes empty lines between imports
+no_sections = true
