@@ -1,15 +1,23 @@
-# Central architecture overview
+# Central
 
-## Watchers
+- [Rest API](#rest-api)
+- [Observers](#observers)
+- [Actions](#actions)
 
-Watchers are read from yml config and loaded into memory during app boot up,
-each watcher status is initialized as follows:
+## REST API
+Central exposes a REST API for several operations.
+See [openapi.yaml](openapi.yaml) for a full specification
 
-```
-failuresCount: 0
-continuousFailuresCount: 0
-status: 'OK'
-```
+### Security
+
+#### API Key authorization and authentication
+API Key is used to authorize and authenticate requests to the API
+Such key is verified by 'central' on every request received by
+the API
+
+#### Rate Limiting
+Rate limiting is not configured in 'central' directly but in the
+nginx server that reverse proxies requests to the API
 
 ## Observers
 
@@ -43,14 +51,15 @@ interval: 5
 
 # See 'actions' doc for a list of all available actions
 on_change:
-    - action1
-    - action2
+    - redis_list_rpush
+    - render_template
+    - ...
 ```
 
 #### Actions payload
-Some actions receives a dictionary with values about the 'event'
-that observer notifies about. Such values are then used to render templates
-or to execute commands.
+Some actions receive a dictionary with values about the 'event'
+that observer is notifying. Such values are then used by actions
+to acomplish their purpose.
 
 This is the payload passed to actions by the 'redis_string' observer.
 ```yaml
@@ -152,14 +161,15 @@ Actions are configurable and can be triggered by observers as response to
 status changes or other conditions depending on the type of observer.
 
 - [redis_list_rpush](#redislistrpush)
-- []()
+- [render_template](#rendertemplate)
+- [docker_ctr_start](#dockerctrstart)
+- [docker_ctr_stop](#dockerctrstop)
 
 ### redis_list_rpush
 
 Does a right push on indicated redis list.
 
-This action is useful for integration with `central` included (and third
-party) notifications service.
+> This action might be useful for integration with notifications services.
 
 ```yaml
 
@@ -174,8 +184,12 @@ type: redis_list_rpush
 # at indicated key
 list_key: ct_tg_notifications
 
-# Whatever you enter here will be pushed to redis list.
-# Below example uses a JSON object as expected by 'central' integrated
+# This is a jinja template, action will execute following steps:
+# 1. Render template passing the payload received from observer
+#    as params to templating engine
+# 2. Push the rendered text into redis list.
+#
+# Below example uses a JSON object as expected by the integrated
 # notifications service
 message: |
     {
@@ -186,4 +200,56 @@ message: |
 
 ### render_template
 
-Takes a
+Renders a template using the paylod received from observer as params
+for templating engine
+
+```yaml
+
+# Unique name to identify this action. Allowed chars: [A-Za-z0-9]
+# Use this value to reference it from observers definitions
+name: render_docs
+
+# Indicates the type of action to the parser
+type: render_template
+
+# Path to the template definition
+template: templates/docs.jinja
+
+# Rendered template will be written to indicated path
+# NOTE: File is overwritten if already exists
+output: config/rendered_docs.md
+```
+
+### docker_ctr_start
+
+Starts a docker container
+
+```yaml
+
+# Unique name to identify this action. Allowed chars: [A-Za-z0-9]
+# Use this value to reference it from observers definitions
+name: start_webserver
+
+# Indicates the type of action to the parser
+type: docker_ctr_start
+
+# Name of docker container to start
+container: webserver
+```
+
+### docker_ctr_stop
+
+Stops a docker container
+
+```yaml
+
+# Unique name to identify this action. Allowed chars: [A-Za-z0-9]
+# Use this value to reference it from observers definitions
+name: stop_webserver
+
+# Indicates the type of action to the parser
+type: docker_ctr_stop
+
+# Name of docker container to stop
+container: webserver
+```
