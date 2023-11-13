@@ -10,8 +10,21 @@ def redis_host():
 def redis_port():
     return os.getenv('REDIS_PORT')
 
+def redis_keys_prefix():
+    return os.getenv('REDIS_KEYS_PREFIX')
+
 def queue_notif():
     return os.getenv('QUEUE_NOTIFICATIONS')
+
+
+def allowed_hosts():
+    ids = os.getenv('ALLOWED_HOSTS', '')
+    return ids.split()
+
+
+def tg_bot_token():
+    return os.getenv('TELEGRAM_BOT_TOKEN')
+
 
 def logs_path():
     return os.getenv('LOGS_PATH')
@@ -24,6 +37,3 @@ def log_level_console():
 
 def log_level_file():
     return os.getenv('LOG_LEVEL_FILE', log_level())
-
-def tg_bot_token():
-    return os.getenv('TELEGRAM_BOT_TOKEN')

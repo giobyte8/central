@@ -7,5 +7,5 @@ docker run --rm                                         \
     -v "${HERE}/../docs/openapi.yaml:/mnt/openapi.yaml" \
     openapitools/openapi-generator-cli generate         \
       -i /mnt/openapi.yaml                              \
-      -g python                                         \
+      -g python-aiohttp                                         \
       -o /mnt/codegen/
