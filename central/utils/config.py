@@ -22,6 +22,10 @@ def allowed_hosts():
     return ids.split()
 
 
+def api_jwt_secret_key():
+    return os.getenv('API_JWT_SECRET_KEY')
+
+
 def tg_bot_token():
     return os.getenv('TELEGRAM_BOT_TOKEN')
 
