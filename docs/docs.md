@@ -191,7 +191,7 @@ list_key: ct_tg_notifications
 #
 # Below example uses a JSON object as expected by the integrated
 # notifications service
-message: |
+msg_template: |
     {
         "title": "✅ Backup compression",
         "content": "45.12 GB successfully compressed in 12mins"
@@ -200,8 +200,8 @@ message: |
 
 ### render_template
 
-Renders a template using the paylod received from observer as params
-for templating engine
+Renders an external template into a file using the paylod received from
+observer as params for templating engine
 
 ```yaml
 
@@ -212,12 +212,12 @@ name: render_docs
 # Indicates the type of action to the parser
 type: render_template
 
-# Path to the template definition
-template: templates/docs.jinja
+# Path to the template definition (file:// is required)
+template_path: file://relative/path/docs.jinja
 
-# Rendered template will be written to indicated path
+# Rendered template will be written to indicated path (file:// is required)
 # NOTE: File is overwritten if already exists
-output: config/rendered_docs.md
+output_path: file:///absolute/path/example/rendered_docs.md
 ```
 
 ### docker_ctr_start
