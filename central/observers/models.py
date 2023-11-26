@@ -1,7 +1,8 @@
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pydantic.networks import FileUrl, HttpUrl
-from typing import Dict, List
+from pydantic.types import conlist
+from typing import Dict, List, Literal, Optional, Union
 
 
 class CTAction(BaseModel):
@@ -9,20 +10,24 @@ class CTAction(BaseModel):
 
 
 class RedisListRPushAction(CTAction):
+    action_type: Literal['redis_list_rpush']
     list_key: str
     msg_template: str
 
 
 class RenderTemplateAction(CTAction):
+    action_type: Literal['render_template']
     template_path: FileUrl
     output_path: FileUrl
 
 
 class DockerCtrStartAction(CTAction):
+    action_type: Literal['docker_ctr_start']
     container: str
 
 
 class DockerCtrStopAction(CTAction):
+    action_type: Literal['docker_ctr_stop']
     container: str
 
 
@@ -32,8 +37,26 @@ class CTObserver(BaseModel):
 
 
 class RedisStringObserver(CTObserver):
+    observer_type: Literal['redis_string']
+
+    # From redis doc: You can use any binary sequence as a key,
+    # from a string like "foo" to the content of a JPEG file.
+    # https://redis.io/docs/manual/keyspace/
+    #
+    # Then, any string can be used as a key
     key: str
-    on_change: List[CTAction]
+
+    # Value must be a list of several actions. Actions can be
+    # of several types depending on value from 'action_type' field.
+    #
+    # https://docs.pydantic.dev/2.3/usage/types/unions/#discriminated-unions-aka-tagged-unions
+    on_change: conlist(
+        Union[
+            RedisListRPushAction,
+            RenderTemplateAction
+        ],
+        min_length=1
+    ) = [Field(..., discriminator='action_type')]
 
 
 class _HttpVerb(Enum):
@@ -49,8 +72,8 @@ class _HttpVerb(Enum):
 class HttpStatusRequest(BaseModel):
     endpoint: HttpUrl
     verb: _HttpVerb
-    headers: Dict[str, str]
-    params: Dict[str, str]
+    headers: Dict[str, str] = None
+    params: Dict[str, str] = None
 
 
 class HttpStatusObserver(CTObserver):
@@ -58,4 +81,4 @@ class HttpStatusObserver(CTObserver):
     expected_status: int
     threshold: int
     actions_interval: List[int]
-    on_unexpected_status: List[CTAction]
+    on_unexpected_status: conlist(CTAction, min_length=1)

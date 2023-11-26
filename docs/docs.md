@@ -40,8 +40,8 @@ to which compare current read.
 # A unique name to identify this observer in log records
 name: server1_ip_observer
 
-# Indicates the type of 'observer' to the parser
-type: redis_string
+# Indicates the kind of observer to the parser
+observer_type: 'redis_string'
 
 # Redis key to watch
 key: 'ct:ip_addr:server1'
@@ -76,6 +76,9 @@ upon 'n' consecutive responses with unexpected http status
 
 # A name to identify this observer in log records
 name: 'XService'
+
+# Indicates the kind of observer to the parser
+observer_type: 'http_status'
 
 # Http endpoint will be hit every 'n' seconds
 # 300s = 5 min
@@ -178,7 +181,7 @@ Does a right push on indicated redis list.
 name: rnotif_bkp_compression_complete
 
 # Indicates the type of action to the parser
-type: redis_list_rpush
+action_type: redis_list_rpush
 
 # Message will be pushed to the end (right push) of list stored
 # at indicated key
@@ -210,7 +213,7 @@ observer as params for templating engine
 name: render_docs
 
 # Indicates the type of action to the parser
-type: render_template
+action_type: render_template
 
 # Path to the template definition (file:// is required)
 template_path: file://relative/path/docs.jinja
@@ -231,7 +234,7 @@ Starts a docker container
 name: start_webserver
 
 # Indicates the type of action to the parser
-type: docker_ctr_start
+action_type: docker_ctr_start
 
 # Name of docker container to start
 container: webserver
@@ -248,7 +251,7 @@ Stops a docker container
 name: stop_webserver
 
 # Indicates the type of action to the parser
-type: docker_ctr_stop
+action_type: docker_ctr_stop
 
 # Name of docker container to stop
 container: webserver
