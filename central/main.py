@@ -12,17 +12,19 @@ if not __package__ and not hasattr(sys, "frozen"):
 
 from central.api.ct_api import app as ct_api_app
 from central.notif import notifier
+from central.observers import observers_svc
 from central.telegram import tg_bot
 
 
 async def main():
-    await asyncio.gather(
-        notifier.start(),
-        tg_bot.start()
-    )
+    observers_svc.start()
+    # await asyncio.gather(
+    #     notifier.start(),
+    #     tg_bot.start()
+    # )
 
 
 if __name__ == '__main__':
-    # asyncio.run(main())
-    ct_api_app.run(host='0000000', port=5000)
+    asyncio.run(main())
+    # ct_api_app.run(host='0000000', port=5000)
 

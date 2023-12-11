@@ -1,0 +1,2 @@
+
+observers: 345 # Should be a list of CTObserver objects

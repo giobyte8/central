@@ -9,3 +9,4 @@ venv
 data.dev/
 scripts/codegen
 docs/*.bkp
+central.cfg.yaml

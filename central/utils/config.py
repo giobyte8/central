@@ -41,3 +41,7 @@ def log_level_console():
 
 def log_level_file():
     return os.getenv('LOG_LEVEL_FILE', log_level())
+
+
+def ct_config_file():
+    return os.getenv('CT_CONFIG_FILE')

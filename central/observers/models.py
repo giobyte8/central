@@ -1,8 +1,9 @@
 from enum import Enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, TypeAdapter
 from pydantic.networks import FileUrl, HttpUrl
 from pydantic.types import conlist
-from typing import Dict, List, Literal, Optional, Union
+from typing import Dict, List, Literal, Union
+from typing_extensions import Annotated
 
 
 class CTAction(BaseModel):
@@ -31,6 +32,21 @@ class DockerCtrStopAction(CTAction):
     container: str
 
 
+ActionsUnion = Annotated[
+    Union[
+        RedisListRPushAction,
+        RenderTemplateAction,
+        DockerCtrStartAction,
+        DockerCtrStopAction
+    ],
+    Field(discriminator='action_type')
+]
+
+# Use adapter to parse list of actions using discriminator field
+# ref: https://stackoverflow.com/a/70917353/3211029
+actionsAdapter = TypeAdapter(List[ActionsUnion])
+
+
 class CTObserver(BaseModel):
     name: str
     interval: int
@@ -56,7 +72,7 @@ class RedisStringObserver(CTObserver):
             RenderTemplateAction
         ],
         min_length=1
-    ) = [Field(..., discriminator='action_type')]
+    ) = Field(..., discriminator='action_type')
 
 
 class _HttpVerb(Enum):
@@ -77,8 +93,22 @@ class HttpStatusRequest(BaseModel):
 
 
 class HttpStatusObserver(CTObserver):
+    observer_type: Literal['http_status']
     request: HttpStatusRequest
     expected_status: int
     threshold: int
     actions_interval: List[int]
     on_unexpected_status: conlist(CTAction, min_length=1)
+
+
+ObserversUnion = Annotated[
+    Union[
+        RedisStringObserver,
+        HttpStatusObserver,
+    ],
+    Field(discriminator='observer_type')
+]
+
+# Use adapter to parse list of objects using discriminator field
+# ref: https://stackoverflow.com/a/70917353/3211029
+observersAdapter = TypeAdapter(List[ObserversUnion])

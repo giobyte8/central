@@ -1,0 +1,9 @@
+
+observers:
+  - name: redis_string_test1
+    interval: 10                  # Seconds
+    observer_type: redis_string
+    key: my_redis_key
+
+    # Required field not found will raise error
+    # on_change:
