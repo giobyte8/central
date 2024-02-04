@@ -45,4 +45,4 @@ def hmac_verify(hmac1: str, hmac2: str) -> bool:
 def checkpw(pwd: str, hashed_pwd: str) -> bool:
     """Returns True if given password matches hashed password, False otherwise.
     """
-    return hmac_verify(hashed_pwd, pwd)
+    return bcrypt.checkpw(pwd.encode(), hashed_pwd.encode())
