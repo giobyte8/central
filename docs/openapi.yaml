@@ -7,6 +7,44 @@ servers:
   - url: http://localhost:6000/api
     description: Development Server
 paths:
+  /notifications/subscriptions:
+    post:
+      summary: Creates a new subscription to notifications feed
+      description: |
+        Creates a new subscription to notifications feed
+
+        Apps and bots can use this endpoint to subscribe to receive
+        notifications (e.g. Telegram bot through embedded mini app).
+      requestBody:
+        description: Subscription data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifSubscription'
+            examples:
+              example1:
+                summary: Telegram notification subscription example
+                value:
+                  notif_delivery_svc: telegram
+                  password: super_secret_password
+                  servicePayload: telegram_init_data_string
+      responses:
+        '200':
+          description: |
+            Subscription was approved and created.
+
+            > Some services might need additional steps to confirm/enable
+              subscription before starting to receive notifications.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotifSubscription'
+        '400':
+          description: Bad request. Invalid data provided.
+        '409':
+          description: Conflict. User already subscribed.
+
   /hosts/{host_id}/status:
     post:
       summary: Records current host status
@@ -55,3 +93,39 @@ components:
           type: string
           format: ipv4
           description: External IPv4 address for the host.
+    NotifSubscription:
+      type: object
+      required:
+        - notif_delivery_svc
+        - password
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The UUID4 of the subscription.
+        notif_delivery_svc:
+          type: string
+          enum:
+            - telegram
+            - websocket
+          description: Name of service that will receive notifications.
+        password:
+          type: string
+          description: |
+            In order to receive notifications, subscription password must
+            be provided.
+        servicePayload:
+          type: string
+          description: |
+            This is a flexible field that can be used to transfer additonal
+            info that might be required by notif delivery service:
+
+            1. `telegram`: Init data string provided by telegram to embedded
+               'mini app'.
+
+               Value must be provided as passed by telegram to mini app
+               (without any modification) for validation on backend.
+
+               See: https://core.telegram.org/bots/webapps#validating-data-received-via-the-mini-app
+
+            2. `websocket`: No additional info is required
