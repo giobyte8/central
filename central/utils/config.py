@@ -29,6 +29,9 @@ def api_jwt_secret_key():
 def tg_bot_token():
     return os.getenv('TELEGRAM_BOT_TOKEN')
 
+def tg_web_apps_url():
+    return os.getenv('TELEGRAM_WEB_APPS_URL')
+
 
 def logs_path():
     return os.getenv('LOGS_PATH')

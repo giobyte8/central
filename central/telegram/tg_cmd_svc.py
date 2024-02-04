@@ -1,4 +1,5 @@
 import logging
+from central.utils import config as cfg
 from central.telegram import tg_api
 from central.telegram.tg_models import (
     TGMessage,
@@ -10,6 +11,9 @@ from central.telegram.tg_models import (
 
 
 logger = logging.getLogger(__name__)
+
+
+_TG_APP_AUTH_URL = f'{ cfg.tg_web_apps_url() }/auth.html'
 
 
 async def on_command(msg: TGMessage):
@@ -38,7 +42,7 @@ async def _on_subscribe(msg: TGMessage):
 
     auth_btn = TGInlineKeyboardWebAppBtn(
         text='🔐 Authenticate',
-        web_app=TGWebAppInfo(url='https://<app>'))
+        web_app=TGWebAppInfo(url=_TG_APP_AUTH_URL))
 
     inline_keyboard = TGInlineKeyboardMarkup(inline_keyboard=[[auth_btn]])
     response = TGResponseMsg(
