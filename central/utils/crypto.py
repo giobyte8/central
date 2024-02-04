@@ -1,3 +1,4 @@
+import bcrypt
 import hashlib
 import hmac
 from typing import Union
@@ -39,3 +40,9 @@ def hmac_verify(hmac1: str, hmac2: str) -> bool:
     """Returns True if given HMACs are equals, False otherwise.
     """
     return hmac.compare_digest(hmac1, hmac2)
+
+
+def checkpw(pwd: str, hashed_pwd: str) -> bool:
+    """Returns True if given password matches hashed password, False otherwise.
+    """
+    return hmac_verify(hashed_pwd, pwd)
