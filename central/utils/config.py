@@ -25,6 +25,9 @@ def allowed_hosts():
 def api_jwt_secret_key():
     return os.getenv('API_JWT_SECRET_KEY')
 
+def notif_feed_subs_pwd():
+    return os.getenv('NOTIF_FEED_SUBSCRIPTION_PWD')
+
 
 def tg_bot_token():
     return os.getenv('TELEGRAM_BOT_TOKEN')
