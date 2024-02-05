@@ -10,8 +10,14 @@ def redis_host():
 def redis_port():
     return os.getenv('REDIS_PORT')
 
-def redis_keys_prefix():
-    return os.getenv('REDIS_KEYS_PREFIX')
+def rd_prefix():
+    return os.getenv('RD_PREFIX')
+
+def rd_tg_unconfirmed_notif_subs() -> str:
+    return os.getenv('RD_TG_UNCONFIRMED_NOTIF_SUBS')
+
+def rd_tg_notif_subscribed_chats() -> str:
+    return os.getenv('RD_TG_NOTIF_SUBSCRIBED_CHATS')
 
 def queue_notif():
     return os.getenv('QUEUE_NOTIFICATIONS')

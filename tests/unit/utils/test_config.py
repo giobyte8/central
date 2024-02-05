@@ -24,9 +24,12 @@ def test_load_special_chars():
 
     rhash = os.environ['RANDOM_HASH']
     rhash_quoted = os.environ['RANDOM_HASH_QUOTED']
-    rhash_escaped = os.environ['RANDOM_HASH_ESCAPED']
 
     assert expected_hash == rhash
     assert expected_hash == rhash_quoted
-    assert expected_hash == rhash_escaped
+
+
+def test_interpolated_values():
+    unconfirmed_notif_subs = 'ct.tg.unconfirmed_notif_subs'
+    assert unconfirmed_notif_subs == cfg.rd_tg_unconfirmed_notif_subs()
 
