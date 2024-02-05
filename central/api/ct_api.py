@@ -1,14 +1,21 @@
 import logging
 from pydantic import ValidationError
 from quart import Quart, request, jsonify
+from quart.wrappers.response import Response
 from quart_jwt_extended import (
     JWTManager,
     jwt_required,
     create_access_token
 )
-from central.utils import config
-from central.api.models import HostStatus
+
+from central.api.models import HostStatus, NotifSubscription
+from central.notif import notif_subs_svc as nsubs_svc
+from central.notif.errors import (
+    NotifSubsAuthError,
+    NotifSubsInvalidError,
+)
 from central.services import host_status_svc
+from central.utils import config
 
 
 logger = logging.getLogger(__name__)
@@ -47,13 +54,29 @@ async def update_host_status(host_id):
     return '', 201
 
 
+@app.route('/api/notifications/subscriptions', methods=['POST'])
+async def create_notif_subscription():
+    jSubscription = await request.get_json()
+    subscription = NotifSubscription(**jSubscription)
+
+    await nsubs_svc.create_subscription(subscription)
+
+    # Hide password from response
+    subscription.password = None
+    return Response(
+        subscription.model_dump_json(),
+        status=200,
+        headers={'Content-Type': 'application/json'}
+    )
+
+
 @app.errorhandler(ValidationError)
 async def bad_request_handler(e: ValidationError):
     logger.debug('Handling Pydantic ValidationError')
 
     # ref: https://docs.pydantic.dev/latest/errors/errors/
     v_errs = e.errors()
-    logger.warn(f'{ len(v_errs) } validation error(s) for HostStatus')
+    logger.warn(f'{ len(v_errs) } validation error(s) for req payload')
 
     j_errs = {}
     for err in v_errs:
@@ -63,3 +86,19 @@ async def bad_request_handler(e: ValidationError):
 
     # From 'Flask returning api errors as json' docs
     return jsonify(validation_errors=j_errs), 400
+
+
+@app.errorhandler(NotifSubsInvalidError)
+async def nsubs_invalid_error_handler(err: NotifSubsInvalidError):
+    msg = f'Invalid notification subscription: { err }'
+    logger.warn(msg)
+
+    return jsonify(error=msg), 400
+
+
+@app.errorhandler(NotifSubsAuthError)
+async def nsubs_auth_error_handler(err: NotifSubsAuthError):
+    msg = f'Notification Subcription Authentication error: { err }'
+    logger.warn(msg)
+
+    return jsonify(error='Telegram init data is invalid'), 401

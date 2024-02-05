@@ -10,12 +10,16 @@
 """
 from __future__ import annotations
 
+import logging
 import urllib
 from central.telegram.errors import (
     TGInitDataAuthError,
     TGInitDataParseError
 )
 from central.utils import crypto
+
+
+logger = logging.getLogger(__name__)
 
 
 class TGInitData():
@@ -25,8 +29,8 @@ class TGInitData():
         try:
             parsed_qs = urllib.parse.parse_qs(qs)
             return TGInitData(parsed_qs)
-        except Exception as root_cause:
-            raise TGInitDataParseError(str(root_cause))
+        except Exception as e:
+            raise TGInitDataParseError(e)
 
     def __init__(self, init_data: dict) -> None:
         self.init_data = init_data
@@ -49,6 +53,7 @@ class TGInitData():
         """
         idata_hash = self.get_param('hash')
         if not idata_hash:
+            logger.warn('Hash param not found in init data')
             raise TGInitDataAuthError('Hash param not found')
 
         # Format init data for authenticity verification
@@ -64,6 +69,7 @@ class TGInitData():
         secret_key_bytes = crypto.hmac_sha256('WebAppData', bot_token)
         auth_code = crypto.hmac_sha256_hex(secret_key_bytes, formatted_idata)
         if not crypto.hmac_verify(auth_code, idata_hash):
+            logger.warn('Hash verification failed')
             raise TGInitDataAuthError('Hash verification failed')
 
     def get_param(self, key: str) -> str | None:

@@ -5,9 +5,10 @@ from ipaddress import IPv4Address
 from typing import Callable
 from uuid import UUID
 
+
 logger = logging.getLogger(__name__)
 
-REDIS_HOSTS_KEY = f'{ cfg.redis_keys_prefix() }hosts'
+REDIS_HOSTS_KEY = f'{ cfg.rd_prefix() }.hosts'
 
 _redis = aioredis.from_url(
     f'redis://{ cfg.redis_host() }:{ cfg.redis_port() }'
@@ -33,3 +34,28 @@ async def consume(q_name: str, on_message: Callable):
 async def set_host_ip(host_id: UUID, ip: IPv4Address) -> None:
     ip_key = f'{ REDIS_HOSTS_KEY }.{ host_id }.ip'
     await _redis.set(ip_key, str(ip))
+
+
+async def exists(key: str) -> bool:
+    count = await _redis.exists(key)
+    return count == 1
+
+
+async def delete(key: str) -> None:
+    await _redis.delete(key)
+
+
+async def str_set(key: str, value: str, expiry: int = None) -> None:
+    await _redis.set(key, value)
+    if expiry is not None:
+        await _redis.expire(key, expiry)
+
+
+async def set_add(key: str, value: str, expiry: int = None) -> None:
+    await _redis.sadd(key, value)
+    if expiry is not None:
+        await _redis.expire(key, expiry)
+
+
+async def set_contains(key: str, value: str) -> bool:
+    return await _redis.sismember(key, value)
