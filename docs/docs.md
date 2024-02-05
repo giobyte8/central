@@ -256,3 +256,7 @@ action_type: docker_ctr_stop
 # Name of docker container to stop
 container: webserver
 ```
+
+## Notifications Service
+
+
