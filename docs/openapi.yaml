@@ -26,7 +26,7 @@ paths:
               example1:
                 summary: Telegram notification subscription example
                 value:
-                  notif_delivery_svc: telegram
+                  notifDeliverySvc: telegram
                   password: super_secret_password
                   servicePayload: telegram_init_data_string
       responses:
@@ -96,14 +96,14 @@ components:
     NotifSubscription:
       type: object
       required:
-        - notif_delivery_svc
+        - notifDeliverySvc
         - password
       properties:
         id:
           type: string
           format: uuid
           description: The UUID4 of the subscription.
-        notif_delivery_svc:
+        notifDeliverySvc:
           type: string
           enum:
             - telegram

@@ -24,17 +24,17 @@ async def create_subscription(sub: NotifSubscription):
     #   2. Prevent subscription duplication
     #   3. Create subscription and set uuid to object
 
-    if sub.notif_delivery_svc == NotifDeliverySvc.TELEGRAM:
+    if sub.notifDeliverySvc == NotifDeliverySvc.TELEGRAM:
         try:
             sub_id = await tg_nsubs_svc.create_subscription(sub.servicePayload)
             sub.id = sub_id
         except TGInitDataAuthError:
             raise NotifSubsAuthError('TG Init data authentication failed')
         except TGInitDataParseError:
-            raise NotifSubsInvalidError('TG Init data seems invalid')
+            raise NotifSubsInvalidError('TG Init data parse error')
 
 
 async def _authenticate(sub: NotifSubscription) -> None:
     if not crypto.checkpw(sub.password, config.notif_feed_subs_pwd()):
         logger.warn(f'Invalid password in notifications subscription')
-        raise NotifSubsAuthError('Password verification error')
+        raise NotifSubsAuthError('Password verification failed')
