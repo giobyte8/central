@@ -1,6 +1,7 @@
 import logging
 from pydantic import ValidationError
 from quart import Quart, request, jsonify
+from quart_cors import route_cors
 from quart.wrappers.response import Response
 from quart_jwt_extended import (
     JWTManager,
@@ -55,6 +56,7 @@ async def update_host_status(host_id):
 
 
 @app.route('/api/notifications/subscriptions', methods=['POST'])
+@route_cors()
 async def create_notif_subscription():
     jSubscription = await request.get_json()
     subscription = NotifSubscription(**jSubscription)
@@ -71,6 +73,7 @@ async def create_notif_subscription():
 
 
 @app.errorhandler(ValidationError)
+@route_cors()
 async def bad_request_handler(e: ValidationError):
     logger.debug('Handling Pydantic ValidationError')
 
@@ -89,6 +92,7 @@ async def bad_request_handler(e: ValidationError):
 
 
 @app.errorhandler(NotifSubsInvalidError)
+@route_cors()
 async def nsubs_invalid_error_handler(err: NotifSubsInvalidError):
     msg = f'Invalid notification subscription: { err }'
     logger.warn(msg)
@@ -97,8 +101,9 @@ async def nsubs_invalid_error_handler(err: NotifSubsInvalidError):
 
 
 @app.errorhandler(NotifSubsAuthError)
+@route_cors()
 async def nsubs_auth_error_handler(err: NotifSubsAuthError):
     msg = f'Notification Subcription Authentication error: { err }'
     logger.warn(msg)
 
-    return jsonify(error='Telegram init data is invalid'), 401
+    return jsonify(error='Telegram init data or password is invalid'), 401
