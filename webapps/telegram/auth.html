@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <link rel="stylesheet" href="src/css/common.css">
+
+    <title>Central</title>
+  </head>
+  <body>
+    <main class="container">
+      <article>
+        <hgroup class="text-center">
+          <h1>Central</h1>
+          <p>Subscribe to receive notifications</p>
+        </hgroup>
+
+        <form id="subscription-form">
+          <input
+            id="inp-notif-delivery-svc"
+            type="hidden"
+            name="notifDeliverySvc"
+            value="telegram"
+          />
+          <input id="inp-init-data" type="hidden" name="servicePayload"/>
+
+          <input
+            id="inp-password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            autocomplete="current-password"
+          />
+
+          <div id="errors-panel" class="errors mb" style="display: none;"></div>
+
+          <button type="primary">
+            Subscribe
+          </button>
+        </form>
+
+        <div id="progress-bar" class="text-center" style="display: none;">
+          <progress></progress>
+          <small>Verifying...</small>
+        </div>
+      </article>
+    </main>
+
+    <script type="module" src="src/js/auth.js"></script>
+  </body>
+</html>

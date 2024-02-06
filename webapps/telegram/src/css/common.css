@@ -1,0 +1,25 @@
+
+.errors {
+    background-color: #f8d7da;
+    border-radius: var(--border-radious);
+    color: rgb(220,53,69);
+    font-size: 0.9rem;
+    padding: var(--form-element-spacing-vertical) var(--form-element-spacing-horizontal);
+}
+
+.mb {
+    margin-bottom: var(--spacing);
+}
+
+.mb-1 {
+    margin-bottom: 1rem;
+}
+
+.mx-1 {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+
+.text-center {
+    text-align: center;
+}
