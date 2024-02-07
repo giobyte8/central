@@ -1,5 +1,5 @@
 import pytest
-from central.telegram.tg_models import TGMessage
+from central.telegram.models import TGMessage
 from pydantic import ValidationError
 
 

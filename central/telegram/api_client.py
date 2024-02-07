@@ -3,7 +3,7 @@ import central.utils.config as cfg
 import logging
 from aiohttp import ClientSession
 from aiohttp import client_exceptions as aiohttp_ex
-from central.telegram.tg_models import TGMessage, TGResponseMsg
+from central.telegram.models import TGMessage, TGResponseMsg
 from pydantic import ValidationError
 from typing import Awaitable, Callable
 

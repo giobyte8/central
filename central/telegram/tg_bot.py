@@ -1,6 +1,6 @@
 import logging
-from central.telegram import tg_api, tg_cmd_svc
-from central.telegram.tg_models import (
+from central.telegram import api_client, tg_cmd_svc
+from central.telegram.models import (
     TGMessage
 )
 
@@ -12,7 +12,7 @@ async def start():
     """Starts to constantly poll updates so that users can keep
     a conversation with bot
     """
-    await tg_api.poll_updates(on_message)
+    await api_client.poll_updates(on_message)
 
 
 async def on_message(msg: TGMessage):

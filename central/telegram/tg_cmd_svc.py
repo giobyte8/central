@@ -1,7 +1,7 @@
 import logging
 from central.utils import config as cfg
-from central.telegram import tg_api
-from central.telegram.tg_models import (
+from central.telegram import api_client
+from central.telegram.models import (
     TGMessage,
     TGResponseMsg,
     TGInlineKeyboardMarkup,
@@ -50,7 +50,7 @@ async def _on_subscribe(msg: TGMessage):
         text=response_text,
         reply_markup=inline_keyboard.model_dump_json())
 
-    await tg_api.send_message(response)
+    await api_client.send_message(response)
 
 
 def _resolve_alias(cmd: str) -> str:
