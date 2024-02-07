@@ -8,11 +8,17 @@ class TGChat(BaseModel):
     type: str
 
 
+class TGWebAppData(BaseModel):
+    button_text: str
+    data: str
+
+
 class TGMessage(BaseModel):
     message_id: int
     chat: TGChat
     date: int
-    text: str
+    text: Optional[str] = None
+    web_app_data: Optional[TGWebAppData] = None
 
 
 class TGWebAppInfo(BaseModel):
