@@ -45,4 +45,4 @@ class TGResponseMsg(BaseModel):
     text: str
 
     # Should be a JSON serialized repr of 'TGInlineKeyboardMarkup'
-    reply_markup: Optional[str]
+    reply_markup: Optional[str] = None

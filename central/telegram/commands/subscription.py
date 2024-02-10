@@ -16,7 +16,7 @@ _TG_APP_AUTH_URL = f'{ cfg.tg_web_apps_url() }/auth.html'
 
 
 class Subscription(Command):
-    subcommand: Optional[Command]
+    subcommand: Optional[Command] = None
 
     def __init__(self, args: 'list[str]', req_msg: TGMessage):
         super().__init__('subscription', args, req_msg)

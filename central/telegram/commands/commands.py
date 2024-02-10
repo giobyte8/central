@@ -29,4 +29,4 @@ async def parse(msg: TGMessage) -> Command:
 async def _resolve_cmd_name(cmd_name: str) -> str:
     if cmd_name in ['/sub', '/subscription']:
         return 'subscription'
-    raise InvalidCommandError(f'Unsupported command: {cmd_name}')
+    raise InvalidCommandError(cmd_name)
