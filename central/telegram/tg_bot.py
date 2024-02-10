@@ -16,12 +16,16 @@ async def start():
 
 
 async def on_message(msg: TGMessage):
-    logger.debug('Message received: %s', msg.text)
-
-    if len(msg.text) > 1 and msg.text.startswith('/'):
+    if await _is_command(msg):
         await tg_cmd_svc.on_command(msg)
     else:
-        logger.info('Message received: %s', msg.text)
+        logger.info('Non command message received: %s', msg.model_dump_json())
 
 
+async def _is_command(msg: TGMessage) -> bool:
+    if msg.text and msg.text.startswith('/'):
+        return True
+    if msg.web_app_data and msg.web_app_data.data.startswith('/'):
+        return True
 
+    return False
