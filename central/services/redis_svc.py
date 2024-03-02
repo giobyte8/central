@@ -31,6 +31,11 @@ async def consume(q_name: str, on_message: Callable):
             await on_message(msg.decode('utf-8'))
 
 
+async def stop():
+    logger.debug('Closing redis connections')
+    await _redis.close()
+
+
 async def set_host_ip(host_id: UUID, ip: IPv4Address) -> None:
     ip_key = f'{ REDIS_HOSTS_KEY }.{ host_id }.ip'
     await _redis.set(ip_key, str(ip))

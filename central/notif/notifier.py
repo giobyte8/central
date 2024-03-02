@@ -1,3 +1,4 @@
+import asyncio
 import json
 import central.utils.config as cfg
 import logging
@@ -21,6 +22,7 @@ async def on_notif_msg(msg: str):
         j_notif = json.loads(msg)
         notif = Notif(**j_notif)
 
+        # TODO Implement subscriber pattern to let tg bot know about notifs
         print(f'Sending notif: { notif.title }')
     except ValidationError as e:
         logger.error('Invalid notification: %s', e)
@@ -29,5 +31,13 @@ async def on_notif_msg(msg: str):
 
 
 async def start():
-    await redis_svc.consume(cfg.queue_notif(), on_notif_msg)
+    try:
+        await redis_svc.consume(cfg.queue_notif(), on_notif_msg)
+    except asyncio.CancelledError:
+        logger.debug('Cancelling service: notifier')
+    finally:
+        await stop()
 
+
+async def stop():
+    await redis_svc.stop()

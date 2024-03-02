@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from central.telegram import api_client, tg_cmd_svc
 from central.telegram.models import (
@@ -12,7 +13,16 @@ async def start():
     """Starts to constantly poll updates so that users can keep
     a conversation with bot
     """
-    await api_client.poll_updates(on_message)
+    try:
+        await api_client.poll_updates(on_message)
+    except asyncio.CancelledError:
+        logger.debug('Cancelling tg bot task')
+    finally:
+        await stop()
+
+
+async def stop() -> None:
+    await api_client.cleanup()
 
 
 async def on_message(msg: TGMessage):
