@@ -1,7 +1,11 @@
 import logging
 import uuid
 from central.telegram import tg_init_data_svc as idata_svc
-from central.telegram import unconfirmed_notif_subs_repo as unsubs_repo
+from central.telegram.errors import UnconfirmedSubNotFound
+from central.telegram.repositories import (
+    notif_subscriptions as subs_repo,
+    unconfirmed_notif_subs as unsubs_repo
+)
 from central.utils import config as cfg
 from uuid import UUID
 
@@ -28,3 +32,20 @@ async def create_subscription(init_data: str) -> UUID:
 
     await unsubs_repo.save(sub_id)
     return sub_id
+
+
+async def confirm_subscription(sub_id: UUID, chat_id: int) -> None:
+    """Confirms subscription to notifications feed and adds chat_id to \
+        subscribed chats.
+
+    Args:
+        sub_id (UUID): Unconfirmed subscription id
+        chat_id (int): Telegram chat id
+    """
+    if not await unsubs_repo.exists(sub_id):
+        raise UnconfirmedSubNotFound(
+            f'Unconfirmed subscription not found: {sub_id}'
+        )
+
+    await subs_repo.save(chat_id)
+    await unsubs_repo.delete(sub_id)

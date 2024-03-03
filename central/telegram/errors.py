@@ -13,3 +13,7 @@ class InvalidCommandError(Exception):
 
 class InvalidCommandArgumentError(Exception):
     pass
+
+
+class UnconfirmedSubNotFound(Exception):
+    pass

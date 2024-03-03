@@ -1,5 +1,9 @@
+from central.telegram import tg_notif_subs_svc
 from central.telegram.commands.base_command import Command
-from central.telegram.errors import InvalidCommandArgumentError
+from central.telegram.errors import (
+    InvalidCommandArgumentError,
+    UnconfirmedSubNotFound,
+)
 from central.telegram.models import (
     TGInlineKeyboardMarkup,
     TGInlineKeyboardWebAppBtn,
@@ -62,4 +66,18 @@ class SubscriptionConfirm(Command):
             )
 
     async def execute(self) -> Optional[TGResponseMsg]:
-        raise NotImplementedError()
+        chat_id = self.req_msg.chat.id
+        try:
+            await tg_notif_subs_svc.confirm_subscription(
+                self.subscription_id,
+                chat_id)
+        except UnconfirmedSubNotFound as e:
+            raise InvalidCommandArgumentError(e)
+
+        response_text = (
+            'You\'re all set! \n'
+            'From now on, you\'ll receive notifications in this chat')
+
+        return TGResponseMsg(
+            chat_id=chat_id,
+            text=response_text)

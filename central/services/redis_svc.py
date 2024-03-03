@@ -2,7 +2,7 @@ import aioredis
 import central.utils.config as cfg
 import logging
 from ipaddress import IPv4Address
-from typing import Callable
+from typing import Callable, List
 from uuid import UUID
 
 
@@ -64,3 +64,8 @@ async def set_add(key: str, value: str, expiry: int = None) -> None:
 
 async def set_contains(key: str, value: str) -> bool:
     return await _redis.sismember(key, value)
+
+
+async def set_members(key: str) -> List[str]:
+    # TODO Should decode members from bytes into strings?
+    return await _redis.smembers(key)
