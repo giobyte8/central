@@ -21,4 +21,7 @@ async def get_all() -> Set[int]:
     Returns:
         set[int]: Set of chats subscribed to notifications
     """
-    return await redis_svc.set_members(__subs_chats_key)
+    str_chat_ids = await redis_svc.set_members(__subs_chats_key)
+
+    # Parse string ids into integers
+    return set(map(int, str_chat_ids))

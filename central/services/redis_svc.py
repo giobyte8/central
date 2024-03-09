@@ -67,5 +67,7 @@ async def set_contains(key: str, value: str) -> bool:
 
 
 async def set_members(key: str) -> List[str]:
-    # TODO Should decode members from bytes into strings?
-    return await _redis.smembers(key)
+    b_members = await _redis.smembers(key)
+
+    # return list(map(str, b_members)) # Would str() use utf-8 by default?
+    return [m.decode('utf-8') for m in b_members]
