@@ -2,63 +2,82 @@ import asyncio
 import json
 import central.utils.config as cfg
 import logging
+from abc import ABC, abstractmethod
 from central.notif.models import Notif
 from central.services import redis_svc
+from central.services.redis_svc import MessageConsumer
 from pydantic import ValidationError
-from typing import Awaitable, Callable
+from typing import Set
 
 
 logger = logging.getLogger(__name__)
 
 
-__listeners = set()
-
-
-async def on_notif_msg(msg: str):
-    """Callback to be invoked upon notification message received from
-    notifications queue
+class NotifListener(ABC):
+    """Abstract notifications listener. Should be implemented by \
+        subscribers in order to get notifications as it arrives
 
     Args:
-        msg (str): Raw json notification from queue
+        ABC (_type_): _description_
     """
-    logger.debug('Notification message received: %s', msg)
 
-    try:
-        j_notif = json.loads(msg)
-        notif = Notif(**j_notif)
+    @abstractmethod
+    async def on_notification(self, notif: Notif):
+        """Callback to be invoked upon notification arrival
 
-        # Notify every subscribed listener about notification
-        for listener in __listeners:
-            await listener(notif)
-    except ValidationError as e:
-        logger.error('Invalid notification: %s', e)
-    except json.JSONDecodeError as e:
-        logger.error('Invalid JSON notification: %s', e)
+        Args:
+            notif (Notif): Notification object
+        """
+        pass
 
 
-async def subscribe(listener: Callable[[Notif], Awaitable[None]]) -> None:
+_listeners: Set[NotifListener] = set()
+
+
+async def subscribe(listener: NotifListener) -> None:
     """Subscribe listener to be notified whenever a new notification \
         arrives
 
     Args:
-        listener (Callable[[Notif], Awaitable[None]]): An async func that \
-            receives a notifications and returns None
+        listener (NotifListener): An implementation of NotifListener \
+            interface
     """
-    __listeners.add(listener)
+    _listeners.add(listener)
 
 
-async def unsubscribe(listener: Callable[[Notif], Awaitable[None]]) -> None:
+async def unsubscribe(listener: NotifListener) -> None:
     """Removes given listener from list of subscribers
 
     Args:
-        listener (Callable[[Notif], Awaitable[None]]): listener to remove
+        listener (NotifListener): listener to remove
     """
-    __listeners.discard(listener)
+    _listeners.discard(listener)
+
+
+
+class NotifMsgConsumer(MessageConsumer):
+    """Message consumer for notifications queue"""
+
+    async def on_message(self, msg: str):
+        logger.debug('Notification message received: %s', msg)
+
+        try:
+            j_notif = json.loads(msg)
+            notif = Notif(**j_notif)
+
+            # Notify every subscribed listener about notification
+            for listener in _listeners:
+                await listener.on_notification(notif)
+        except ValidationError as e:
+            logger.error('Invalid notification: %s', e)
+        except json.JSONDecodeError as e:
+            logger.error('Invalid JSON notification: %s', e)
 
 
 async def start():
     try:
-        await redis_svc.consume(cfg.queue_notif(), on_notif_msg)
+        consumer = NotifMsgConsumer()
+        await redis_svc.consume(cfg.queue_notif(), consumer)
     except asyncio.CancelledError:
         logger.debug('Cancelling service: notifier')
     finally:
