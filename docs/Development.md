@@ -27,6 +27,29 @@ Navigate into web apps root `webapps/telegram` and exec following steps
     npm run dev
     ```
 
+**Enable access from telegram app in same host**
+If you're working in the telegram bot and web apps you might want to access
+the apps from telegram application using the *development* bot for development
+
+By default, telegram allows loading of [mini apps](https://core.telegram.org/bots/webapps)
+only through `https`. Hence, in order to do testing in development you can
+expose the mini app through a local tunnel and get a `https` temporary domain
+for it.
+
+> Here I'm using [localtunnel.me](), however there are several other services
+> providing the same functionality.
+
+```shell
+# Install localtunnel
+npm install -g localtunnel
+
+# Expose your application port
+lt --port 5173
+```
+
+Local tunnel will expose your application through ssl and will show you a
+random domain name you can use to access it.
+
 ## Telegram Web Apps Release
 
 > Make sure all your desired apps/entry points are registered into
