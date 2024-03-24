@@ -1,3 +1,9 @@
+name: central
 
-# For redis and other database use containers from local infra
-# instead
+services:
+  web:
+    image: giobyte8/central-web:dev
+    container_name: central-web
+    ports:
+      - 3000:80
+

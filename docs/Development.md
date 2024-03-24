@@ -18,7 +18,7 @@ Navigate into web apps root `webapps/telegram` and exec following steps
     ```shell
     cp template.env .env
     vim .env
-
+    
     # Enter development values for variables
     ```
 
@@ -62,7 +62,7 @@ Navigate into web apps root `webapps/telegram` and exec following steps
     ```shell
     cp template.env .env.production.local
     vim .env.production.local
-
+    
     # Enter prod values for variables.
     # NOTE that some variables such as `VITE_TG_AUTH_TEST_INIT_DATA` might not
     # be needed in prod mode, hence, you can safely remove them from env file
@@ -78,3 +78,14 @@ You can expose it manually through any web server or optionally build below
 docker image
 
 ### Release docker image
+
+> If you'll deploy image in a different arch than the used for building you may
+> want to follow steps at this [docker multi-platform images article]](https://giovanniaguirre.me/blog/docker_build_multiarch/) before building the image.
+
+Use provided script `docker/build_web_image.sh` to generate and optionally push image to docker registry.
+
+```shell
+./build_web_image.sh -t 1.0.0 -p
+```
+
+> You can use `./build_web_image.sh -h` for usage details and arguments

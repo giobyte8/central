@@ -1,0 +1,8 @@
+# Ignore everything but files needed
+# for application deployment
+
+*
+
+# Allow web application files
+!docker/web.conf
+!webapps/telegram/dist
