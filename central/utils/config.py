@@ -4,6 +4,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def env_mode() -> str:
+    return os.getenv('ENV_MODE', 'dev')
+
 def redis_host():
     return os.getenv('REDIS_HOST')
 

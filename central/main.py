@@ -1,6 +1,8 @@
 import asyncio
 import os
 import sys
+from hypercorn.config import Config
+from hypercorn.asyncio import serve
 
 # If package was not imported from other module
 # and package has not been yet installed
@@ -14,6 +16,7 @@ from central.api.ct_api import app as ct_api_app
 from central.notif import notifier
 from central.observers import observers_svc
 from central.telegram import tg_bot
+from central.utils import config as cfg
 
 
 __ct_tasks = set()
@@ -51,7 +54,13 @@ async def main():
 
 
 if __name__ == '__main__':
-    ct_api_app.run(host='0.0.0.0', port=5000)
+    if cfg.env_mode() in ['prod', 'production']:
+        hypercorn_cfg = Config()
+        hypercorn_cfg.bind = ['0.0.0.0:5000']
+
+        asyncio.run(serve(ct_api_app, hypercorn_cfg))
+    else:
+        ct_api_app.run(host='0.0.0.0', port=5000)
 
     # Alternatively run all tasks into a custom coroutine
     # and start each task with asyncio.create_task() inside it.
