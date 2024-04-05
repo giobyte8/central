@@ -2,6 +2,7 @@
 venv
 .venv
 .env
+central.env
 
 .vscode
 .DS_Store

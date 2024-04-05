@@ -6,3 +6,7 @@
 # Allow web application files
 !docker/web.conf
 !webapps/telegram/dist
+
+# Allow backend files
+!central/
+!requirements.txt

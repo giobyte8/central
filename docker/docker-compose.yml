@@ -7,3 +7,9 @@ services:
     ports:
       - 3000:80
 
+  central:
+    image: giobyte8/central:dev
+    container_name: central
+    env_file:
+      - central.env
+
