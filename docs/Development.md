@@ -80,7 +80,7 @@ docker image
 ### Release docker image
 
 > If you'll deploy image in a different arch than the used for building you may
-> want to follow steps at this [docker multi-platform images article]](https://giovanniaguirre.me/blog/docker_build_multiarch/) before building the image.
+> want to follow steps at this [docker multi-platform images article](https://giovanniaguirre.me/blog/docker_build_multiarch/) before building the image.
 
 Use provided script `docker/build_web_image.sh` to generate and optionally push image to docker registry.
 
@@ -89,3 +89,16 @@ Use provided script `docker/build_web_image.sh` to generate and optionally push 
 ```
 
 > You can use `./build_web_image.sh -h` for usage details and arguments
+
+## Central Backend and APIs release
+
+> If you'll deploy image in a different arch than the used for building you may
+> want to follow steps at this [docker multi-platform images article](https://giovanniaguirre.me/blog/docker_build_multiarch/) before building the image.
+
+When a new version of central is ready for release, just run integrated script to build and release a new version of central docker image.
+
+```shell
+./build_backend_image.sh -t 1.0.0 -p
+```
+
+> Use `./build_backend_image.sh -h` for usage details

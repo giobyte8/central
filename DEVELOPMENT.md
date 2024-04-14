@@ -21,9 +21,3 @@ Central is made of a python backend and several static web apps
 - `webapps` Static web apps, Holds several independent web applications that
    exposes UI functionality for multiple purposes.
    - `webapps/telegram` Web applications accessed through the telegram bot
-
-# Release process
-
-### Telegram web apps
-
-
