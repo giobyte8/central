@@ -33,3 +33,10 @@ def test_interpolated_values():
     unconfirmed_notif_subs = 'ct.tg.unconfirmed_notif_subs'
     assert unconfirmed_notif_subs == cfg.rd_tg_unconfirmed_notif_subs()
 
+def test_load_boolean():
+    assert cfg.redis_ssl()
+
+def test_load_empty_value():
+    assert '' == cfg.redis_password()
+    assert not cfg.redis_password()
+

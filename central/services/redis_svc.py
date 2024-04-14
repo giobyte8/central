@@ -8,12 +8,72 @@ from uuid import UUID
 
 
 logger = logging.getLogger(__name__)
-
 REDIS_HOSTS_KEY = f'{ cfg.rd_prefix() }.hosts'
 
-_redis = aioredis.from_url(
-    f'redis://{ cfg.redis_host() }:{ cfg.redis_port() }'
-)
+
+class _RedisClientBuilder:
+    __proto: str = 'redis'
+    __host: str = 'localhost'
+    __port: str = '6379'
+    __db_idx: str = None
+    __username: str = None
+    __password: str = None
+
+
+    def host(self, host: str) -> '_RedisClientBuilder':
+        self.__host = host
+        return self
+
+    def port(self, port: str) -> '_RedisClientBuilder':
+        self.__port = port
+        return self
+
+    def ssl(self, ssl: bool) -> '_RedisClientBuilder':
+        if ssl:
+            self.__proto = 'rediss'
+
+    def db(self, db_idx: str) -> '_RedisClientBuilder':
+        self.__db_idx = db_idx
+        return self
+
+    def username(self, username: str) -> '_RedisClientBuilder':
+        self.__username = username
+        return self
+
+    def password(self, password: str) -> '_RedisClientBuilder':
+        self.__password = password
+        return self
+
+    def build(self) -> aioredis.Redis:
+        url = f'{ self.__proto }://{ self.__host }:{ self.__port }'
+        if self.__db_idx is not None:
+            url += f'/{ self.__db_idx }'
+
+        logger.debug('Connecting to redis: %s', url)
+        if self.__username is not None:
+            return aioredis.from_url(
+                url,
+                username=self.__username,
+                password=self.__password
+            )
+        else:
+            return aioredis.from_url(url)
+
+    @staticmethod
+    def init_from_env() -> '_RedisClientBuilder':
+        builder = _RedisClientBuilder()
+        builder.host(cfg.redis_host())
+        builder.port(cfg.redis_port())
+        builder.ssl(cfg.redis_ssl())
+
+        if cfg.redis_username() is not None:
+            builder.username(cfg.redis_username())
+            builder.password(cfg.redis_password())
+
+        return builder
+
+
+_redis = _RedisClientBuilder.init_from_env().build()
 
 
 class MessageConsumer(ABC):

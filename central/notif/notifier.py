@@ -80,6 +80,8 @@ async def start():
         await redis_svc.consume(cfg.queue_notif(), consumer)
     except asyncio.CancelledError:
         logger.debug('Cancelling service: notifier')
+    except Exception as e:
+        logger.error('Error in notifications consumer: %s', e)
     finally:
         # TODO: Any raised error derives in connection closed
         await stop()

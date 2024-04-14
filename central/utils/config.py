@@ -13,6 +13,15 @@ def redis_host():
 def redis_port():
     return os.getenv('REDIS_PORT')
 
+def redis_ssl() -> bool:
+    return os.getenv('REDIS_SSL', 'false') == 'true'
+
+def redis_username() -> str:
+    return os.getenv('REDIS_USERNAME')
+
+def redis_password() -> str:
+    return os.getenv('REDIS_PASSWORD')
+
 def rd_prefix():
     return os.getenv('RD_PREFIX')
 
