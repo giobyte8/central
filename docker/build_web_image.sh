@@ -8,12 +8,6 @@ HERE="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 BUILD_SCRIPT="build_image.sh"
 DOCKERFILE="web.dockerfile"
 
-# Use absolute paths in case that script is executed from other path
-if [ ! -f "$BUILD_SCRIPT" ]; then
-    BUILD_SCRIPT="${HERE}/${BUILD_SCRIPT}"
-    DOCKERFILE="${HERE}/${DOCKERFILE}"
-fi
-
 IMAGE_NAME=giobyte8/central-web
 IMAGE_TAG=dev
 PUSH_IMAGE=false
@@ -26,30 +20,39 @@ function usage {
   echo "  -p        Push the image after building"
 }
 
-# Parse arguments and options regardless its position
-# Ref: https://stackoverflow.com/a/63421397/3211029
-args=()
-while [ $OPTIND -le "$#" ]
+# Simple and easy args parsing
+# Ref: https://stackoverflow.com/a/21535142/3211029
+while [ "`echo $1 | cut -c1`" = "-" ]
 do
-  if getopts "tph" flag
-  then
-    case $flag in
-      h)
-        usage
-        exit 0
-        ;;
-      t)
-        IMAGE_TAG="$OPTARG"
-        ;;
-      p)
-        PUSH_IMAGE=true
-        ;;
-    esac
-  else
-    args+=("${!OPTIND}")
-    ((OPTIND++))
-  fi
+    case "$1" in
+        -h)
+          usage
+          exit 0
+          ;;
+        -p)
+          PUSH_IMAGE=true
+          shift 1
+          ;;
+        -t)
+          IMAGE_TAG=$2
+          shift 2
+          ;;
+        *)
+          usage
+          exit 1
+          ;;
+esac
 done
+
+# Use absolute paths in case that script is executed from other path
+if [ ! -f "$BUILD_SCRIPT" ]; then
+    BUILD_SCRIPT="${HERE}/${BUILD_SCRIPT}"
+    DOCKERFILE="${HERE}/${DOCKERFILE}"
+
+    echo "Build script: $BUILD_SCRIPT"
+    echo "Dockerfile: $DOCKERFILE"
+    echo
+fi
 
 # Build image by invoking .build_image.sh script
 if [ "$PUSH_IMAGE" = true ]; then
