@@ -1,78 +1,76 @@
 from enum import Enum
-from pydantic import BaseModel, Field, TypeAdapter
+from pydantic import BaseModel, Field
+from pydantic.functional_validators import AfterValidator
 from pydantic.networks import FileUrl, HttpUrl
-from pydantic.types import conlist
-from typing import Dict, List, Literal, Union
+from typing import Dict, List
 from typing_extensions import Annotated
 
 
-class CTAction(BaseModel):
-    name: str
+def is_semi_alphanumeric(value: str) -> str:
+    """Validates given string contains only chars from \
+        A-Z, a-z, '_' and '-'
+
+    Args:
+        value (str): String to validate
+
+    Raises:
+        ValueError: In case provided string is not semi alphanumeric
+    """
+    if not value:
+        raise ValueError('Value cannot be empty')
+
+    # Verify that string contains only chars from A-Z, a-z, '_' and '-'
+    if not value.replace('_', '').replace('-', '').isalnum():
+        raise ValueError(f'Value "{value}" contains invalid chars')
+
+    return value
 
 
-class RedisListRPushAction(CTAction):
-    action_type: Literal['redis_list_rpush']
-    list_key: str
+# Custom defined types
+SemiAlphaNum = Annotated[str, AfterValidator(is_semi_alphanumeric)]
+
+
+###############################################################################
+# Actions models
+
+class Action(BaseModel):
+    name: SemiAlphaNum
+
+
+class RedisListRPushAction(Action):
+    list_key: str = Field(min_length=1)
     msg_template: str
 
 
-class RenderTemplateAction(CTAction):
-    action_type: Literal['render_template']
+class RenderTemplateAction(Action):
     template_path: FileUrl
     output_path: FileUrl
 
 
-class DockerCtrStartAction(CTAction):
-    action_type: Literal['docker_ctr_start']
+class DockerCtrStartAction(Action):
     container: str
 
 
-class DockerCtrStopAction(CTAction):
-    action_type: Literal['docker_ctr_stop']
+class DockerCtrStopAction(Action):
     container: str
 
 
-ActionsUnion = Annotated[
-    Union[
-        RedisListRPushAction,
-        RenderTemplateAction,
-        DockerCtrStartAction,
-        DockerCtrStopAction
-    ],
-    Field(discriminator='action_type')
-]
+###############################################################################
+# Observers definitions
 
-# Use adapter to parse list of actions using discriminator field
-# ref: https://stackoverflow.com/a/70917353/3211029
-actionsAdapter = TypeAdapter(List[ActionsUnion])
+class Observer(BaseModel):
+    name: SemiAlphaNum
+    interval: int = Field(ge=1)
 
 
-class CTObserver(BaseModel):
-    name: str
-    interval: int
-
-
-class RedisStringObserver(CTObserver):
-    observer_type: Literal['redis_string']
+class RedisStringObserver(Observer):
 
     # From redis doc: You can use any binary sequence as a key,
     # from a string like "foo" to the content of a JPEG file.
     # https://redis.io/docs/manual/keyspace/
-    #
-    # Then, any string can be used as a key
-    key: str
+    key: str = Field(min_length=1)
 
-    # Value must be a list of several actions. Actions can be
-    # of several types depending on value from 'action_type' field.
-    #
-    # https://docs.pydantic.dev/2.3/usage/types/unions/#discriminated-unions-aka-tagged-unions
-    on_change: conlist(
-        Union[
-            RedisListRPushAction,
-            RenderTemplateAction
-        ],
-        min_length=1
-    ) = Field(..., discriminator='action_type')
+    on_change: List[SemiAlphaNum] = Field(min_length=1)
 
 
 class _HttpVerb(Enum):
@@ -92,23 +90,16 @@ class HttpStatusRequest(BaseModel):
     params: Dict[str, str] = None
 
 
-class HttpStatusObserver(CTObserver):
-    observer_type: Literal['http_status']
+class HttpStatusObserverState(Enum):
+    ok = 'ok'
+    triggered = 'triggered'
+
+
+class HttpStatusObserver(Observer):
+    state: HttpStatusObserverState = HttpStatusObserverState.ok
+
     request: HttpStatusRequest
-    expected_status: int
+    expected_status: int = Field(ge=100, le=599)
     threshold: int
     actions_interval: List[int]
-    on_unexpected_status: conlist(CTAction, min_length=1)
-
-
-ObserversUnion = Annotated[
-    Union[
-        RedisStringObserver,
-        HttpStatusObserver,
-    ],
-    Field(discriminator='observer_type')
-]
-
-# Use adapter to parse list of objects using discriminator field
-# ref: https://stackoverflow.com/a/70917353/3211029
-observersAdapter = TypeAdapter(List[ObserversUnion])
+    on_unexpected_status: List[SemiAlphaNum] = Field(min_length=1)
