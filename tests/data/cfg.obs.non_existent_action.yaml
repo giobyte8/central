@@ -1,0 +1,17 @@
+
+observers:
+  rbx_ipv4:
+    type: redis_string
+    interval: 300
+    key: ct:ip_addr:server1
+    on_change:
+      - render_proxy_pass
+
+      # This action does not exist
+      - non_existent_action
+
+actions:
+  render_proxy_pass:
+    type: render_template
+    template_path: file://data.dev/template_dev.jinja
+    output_path: file://data.dev/template_dev_out.txt

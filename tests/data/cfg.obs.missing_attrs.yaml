@@ -1,0 +1,11 @@
+
+observers:
+
+  # Missing 'interval' attribute
+  ipv4_watcher:
+    type: redis_string
+    # interval: 25
+    key: my_redis_key
+    on_change:
+      - action1
+      - action2

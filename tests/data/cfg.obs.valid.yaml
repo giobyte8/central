@@ -1,0 +1,64 @@
+
+observers:
+  rbx_ipv4:
+    type: redis_string
+    interval: 300
+    key: ct:ip_addr:server1
+    on_change:
+      - render_proxy_pass
+      - notify_rbx_ipv4_update
+
+  galleries_app_health:
+    type: http_status
+    interval: 600
+    request:
+      endpoint: https://galleries.giovanniaguirre.me/hc
+      verb: HEAD
+      headers:
+        auth: 'Basic: a_random_token'
+        x-api-key: api_key_value
+      params:
+        a: random_value
+        b: '123'
+    expected_status: 200
+    threshold: 3
+    actions_interval:
+        - 300
+        - 3600
+        - 86400
+    on_unexpected_status:
+        - notify_galleries_app_down
+        - galleries_svc_stop
+        - galleries_svc_start
+
+actions:
+  notify_rbx_ipv4_update:
+    type: redis_list_rpush
+    list_key: ct_tg_notifications
+    msg_template: |
+        {
+            "title": "✅ Backup compression",
+            "content": "45.12 GB successfully compressed in 12mins"
+        }
+
+  render_proxy_pass:
+    type: render_template
+    template_path: file://data.dev/template_dev.jinja
+    output_path: file://data.dev/template_dev_out.txt
+
+  galleries_svc_stop:
+    type: docker_ctr_stop
+    container: galleries
+
+  galleries_svc_start:
+    type: docker_ctr_start
+    container: galleries
+
+  notify_galleries_app_down:
+    type: redis_list_rpush
+    list_key: ct_tg_notifications
+    msg_template: |
+        {
+            "title": "🔥 Galleries app not responding",
+            "content": "Galleries app is not responding. Service down?"
+        }

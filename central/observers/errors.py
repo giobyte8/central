@@ -1,44 +1,18 @@
-from typing import Any, Dict
+
+class ActionNotFoundError(Exception):
+    """Raised by data stores when an observer action is not found"""
+
+    def __init__(self, action_name: str) -> None:
+        super().__init__(self, f'Action {action_name} not found')
 
 
-class ActionsSectionNotFound(Exception):
-    def __init__(self, yaml_cfg: Dict) -> None:
-        Exception.__init__(
-            self,
-            f'"actions" section wasn\'t found in yaml config: { yaml_cfg }'
-        )
+class ActionsInvalidConfigError(Exception):
+    """Raised during parsing of YAML config"""
 
-class ActionsSectionInvalid(Exception):
-    def __init__(self, actions_cfg: Any) -> None:
-        Exception.__init__(
-            self,
-            f'"actions" section isn\'t a valid list: { actions_cfg }'
-        )
 
-class ActionsValidationError(Exception):
-    def __init__(self, msg: str) -> None:
-        Exception.__init__(
-            self,
-            f'Actions definition is invalid: { msg }'
-        )
+class ObserversInvalidConfigError(Exception):
+    """Raised during parsing of YAML config"""
 
-class ObserversSectionNotFound(Exception):
-    def __init__(self, yaml_cfg: Dict) -> None:
-        Exception.__init__(
-            self,
-            f'"observers" section wasn\'t found in yaml config: { yaml_cfg }'
-        )
 
-class ObserversSectionInvalid(Exception):
-    def __init__(self, actions_cfg: Any) -> None:
-        Exception.__init__(
-            self,
-            f'"observers" section isn\'t a valid list: { actions_cfg }'
-        )
-
-class ObserversValidationError(Exception):
-    def __init__(self, msg: str) -> None:
-        Exception.__init__(
-            self,
-            f'Observers definition is invalid: { msg }'
-        )
+class ConfigStoreError(Exception):
+    """Raised by stores during CRUD operations"""
