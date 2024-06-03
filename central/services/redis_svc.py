@@ -132,6 +132,11 @@ async def str_set(key: str, value: str, expiry: int = None) -> None:
         await _redis.expire(key, expiry)
 
 
+async def str_get(key: str) -> str:
+    b_value = await _redis.get(key)
+    return b_value.decode('utf-8')
+
+
 async def set_add(key: str, value: str, expiry: int = None) -> None:
     await _redis.sadd(key, value)
     if expiry is not None:
