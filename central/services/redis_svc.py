@@ -152,3 +152,16 @@ async def set_members(key: str) -> List[str]:
 
     # return list(map(str, b_members)) # Would str() use utf-8 by default?
     return [m.decode('utf-8') for m in b_members]
+
+
+async def list_rpush(key: str, value: str) -> int:
+    """Pushes a value to the tail (right) of a redis list
+
+    Args:
+        key (str): Redis key of the list
+        value (str): Value to push to the list
+
+    Returns:
+        int: Number of elements in the list after the push operation
+    """
+    return await _redis.rpush(key, value)

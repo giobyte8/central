@@ -85,7 +85,7 @@ observers:
 
 #### Sharing context to actions
 
-When invoking actions, this observer will include below values in `observer_ctx` dict passed as param to actions.
+When invoking actions, this observer will include below values in `context` dict passed as param to actions.
 
 ```python
 observer_ctx = {
@@ -223,7 +223,7 @@ actions:
     # at indicated key
     list_key: ct_tg_notifications
 
-    # This is a jinja template, action will execute following steps:
+    # This is a jinja2 template, action will execute following steps:
     # 1. Render template passing the payload received from observer
     #    as params to templating engine
     # 2. Push the rendered text into redis list.
@@ -233,7 +233,7 @@ actions:
     msg_template: |
         {
             "title": "✅ Backup compression",
-            "content": "45.12 GB successfully compressed in 12mins"
+            "content": "{{ size_gb }} GB successfully compressed in {{ mins }} mins"
         }
 ```
 
