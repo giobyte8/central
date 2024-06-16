@@ -3,7 +3,7 @@ import central.utils.config as cfg
 import logging
 from abc import ABC, abstractmethod
 from ipaddress import IPv4Address
-from typing import List
+from typing import List, Union
 from uuid import UUID
 
 
@@ -132,8 +132,10 @@ async def str_set(key: str, value: str, expiry: int = None) -> None:
         await _redis.expire(key, expiry)
 
 
-async def str_get(key: str) -> str:
+async def str_get(key: str) -> Union[str, None]:
     b_value = await _redis.get(key)
+    if b_value is None:
+        return None
     return b_value.decode('utf-8')
 
 

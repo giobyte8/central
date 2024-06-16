@@ -33,9 +33,11 @@ class RedisStrObserverJob(ObserverJob):
         last_value = await redis_svc.str_get(last_value_key)
         curr_value = await redis_svc.str_get(self.__observer.key)
 
-        if not last_value:
+        if last_value is None:
             logger.info(f'No previous value for: { self.__observer.name }')
-            await redis_svc.str_set(last_value_key, curr_value)
+
+            if curr_value is not None:
+                await redis_svc.str_set(last_value_key, curr_value)
             return
 
         if curr_value != last_value:

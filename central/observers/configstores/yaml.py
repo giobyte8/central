@@ -124,9 +124,6 @@ class YamlConfigStore(MemoryConfigStore):
 
     Keeps loaded observers and actions as python objects
     in memory for fast access.
-
-    TODO: Extend from MemoryConfigStore and add all observers/actions
-           from yaml to store during initialization
     """
 
     def __init__(self):
