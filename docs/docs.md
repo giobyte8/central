@@ -248,10 +248,12 @@ actions:
 	render_docs:
 		type: render_template
 
-    # Path to the template definition (file:// is required)
-    template_path: file://relative/path/docs.jinja
+    # URI to the template file in the format (file://host/path/to/file)
+    # for local URIs, omit the host value but not its '/'. eg. file:///path/file.txt
+    # Only absolute paths supported (See: https://en.wikipedia.org/wiki/File_URI_scheme)
+    template_path: file:///path/templates/docs.jinja
 
-    # Rendered template will be written to indicated path (file:// is required)
+    # Rendered template will be written to indicated file URI.
     # NOTE: File is overwritten if already exists
     output_path: file:///absolute/path/example/rendered_docs.md
 ```

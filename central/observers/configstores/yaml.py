@@ -132,7 +132,7 @@ class YamlConfigStore(MemoryConfigStore):
 
     def __load_from_file(self) -> None:
         file_path = cfg.ct_config_file()
-        futils.validate_file(file_path)
+        futils.verify_file_existence(file_path)
 
         logger.info(f'Loading config from: {file_path}')
         with open(file_path, 'r') as f:

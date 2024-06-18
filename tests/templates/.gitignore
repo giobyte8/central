@@ -1,0 +1,4 @@
+
+# Prevent rendered outputs from get into VCS
+index.html
+no_variables.txt

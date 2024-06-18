@@ -6,9 +6,9 @@ class PathCreationError(Exception):
     def __init__(self, path: str) -> None:
         Exception.__init__(self, f'Path could not be created: { path }')
 
-class PathIsntFileError(Exception):
+class PathIsNotAFileError(Exception):
     def __init__(self, path: str) -> None:
-        Exception.__init__(self, f'Path is not a valid file: { path }')
+        super().__init__(self, f'Path is not a valid file: { path }')
 
 class PathNotADirectoryError(Exception):
     def __init__(self, path: str) -> None:
@@ -25,15 +25,15 @@ def ensure_dir_existence(path: str) -> None:
             raise PathCreationError(path)
 
 
-def validate_file(path: str) -> None:
+def verify_file_existence(path: str) -> None:
     """Verifies that given path points to a valid existent file
 
     Args:
-        path (str): Relative or absolute path to local a file
+        path (str): Relative or absolute path to a local file
 
     Raises:
         PathIsntFileError: If given path does not exists or is not a file
     """
     path = Path(path)
     if not path.is_file():
-        raise PathIsntFileError(path)
+        raise PathIsNotAFileError(path)
