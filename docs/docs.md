@@ -239,7 +239,7 @@ actions:
 
 ### render_template
 
-Renders a [jinja](https://jinja.palletsprojects.com) template to an output file.
+Renders a [jinja2](https://jinja.palletsprojects.com) template to an output file.
 
 It uses context values received from observer (`observer_ctx`) as params for templating engine.
 
@@ -251,11 +251,11 @@ actions:
     # URI to the template file in the format (file://host/path/to/file)
     # for local URIs, omit the host value but not its '/'. eg. file:///path/file.txt
     # Only absolute paths supported (See: https://en.wikipedia.org/wiki/File_URI_scheme)
-    template_path: file:///path/templates/docs.jinja
+    template_uri: file:///path/templates/docs.jinja
 
     # Rendered template will be written to indicated file URI.
     # NOTE: File is overwritten if already exists
-    output_path: file:///absolute/path/example/rendered_docs.md
+    output_uri: file:///absolute/path/example/rendered_docs.md
 ```
 
 ### docker_ctr_start

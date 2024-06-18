@@ -19,7 +19,7 @@ class RenderTemplateRunner(ARunner):
     async def run(self, context: Dict[str, Any]) -> None:
         logger.info(f'Running render_template action: { self.action.name }')
 
-        template = await self._load_template(self.action.template_path.path)
+        template = await self._load_template(self.action.template_uri.path)
         render_output = StrTemplate(template).render(**context)
         await self._write_render_output(render_output)
 
@@ -31,5 +31,5 @@ class RenderTemplateRunner(ARunner):
         return template
 
     async def _write_render_output(self, render_output: str) -> None:
-        async with aiofiles.open(self.action.output_path.path, mode='w') as f:
+        async with aiofiles.open(self.action.output_uri.path, mode='w') as f:
             await f.write(render_output)

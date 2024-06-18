@@ -57,11 +57,11 @@ class TestRedisListRPushAction:
 
 
 class TestRenderTemplateAction:
-    def test_load_invalid_template_path(self):
+    def test_load_invalid_template_uri(self):
         data = {
             'name': 'rt_test',
-            'template_path': 'relative/invalid_path/template',
-            'output_path': 'file:///abs/path/file.html'
+            'template_uri': 'relative/invalid_path/template',
+            'output_uri': 'file:///abs/path/file.html'
         }
 
         with pytest.raises(ValidationError) as e:
@@ -70,14 +70,14 @@ class TestRenderTemplateAction:
         # Original error is contained inside pytest ExceptionInfo.value
         e = e.value
         assert e.error_count() == 1
-        assert e.errors()[0]['loc'] == ('template_path',)
+        assert e.errors()[0]['loc'] == ('template_uri',)
         assert e.errors()[0]['type'] == 'url_parsing'
 
-    def test_load_invalid_output_path(self):
+    def test_load_invalid_output_uri(self):
         data = {
             'name': 'rt_test',
-            'template_path': 'file://relative/path/template',
-            'output_path': './INVALID/path/file.html'
+            'template_uri': 'file://relative/path/template',
+            'output_uri': './INVALID/path/file.html'
         }
 
         with pytest.raises(ValidationError) as e:
@@ -86,21 +86,21 @@ class TestRenderTemplateAction:
         # Original error is contained inside pytest ExceptionInfo.value
         e = e.value
         assert e.error_count() == 1
-        assert e.errors()[0]['loc'] == ('output_path',)
+        assert e.errors()[0]['loc'] == ('output_uri',)
         assert e.errors()[0]['type'] == 'url_parsing'
 
     ## Load a valid action
     def test_load(self):
         data = {
             'name': 'rt_test',
-            'template_path': 'file://relative/path/template',
-            'output_path': 'file:///abs/path/file.html'
+            'template_uri': 'file://relative/path/template',
+            'output_uri': 'file:///abs/path/file.html'
         }
 
         action = RenderTemplateAction(**data)
         assert action.name == 'rt_test'
-        assert str(action.template_path) == 'file://relative/path/template'
-        assert str(action.output_path) == 'file:///abs/path/file.html'
+        assert str(action.template_uri) == 'file://relative/path/template'
+        assert str(action.output_uri) == 'file:///abs/path/file.html'
 
 
 class TestDockerCtrStartAction:

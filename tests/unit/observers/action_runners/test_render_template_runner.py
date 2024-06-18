@@ -15,8 +15,8 @@ class TestRenderTemplateAction:
         non_existent_path = 'file:///tests/templates/non_existent.template'
         action = RenderTemplateAction(
             name='test',
-            template_path=non_existent_path,
-            output_path='file:///tests/templates/non_existent.txt'
+            template_uri=non_existent_path,
+            output_uri='file:///tests/templates/non_existent.txt'
         )
         action_runner = RenderTemplateRunner(action)
 
@@ -27,16 +27,16 @@ class TestRenderTemplateAction:
     async def test_no_variables_template(self):
         t_rel_path = 'tests/templates/no_variables.template'
         t_abs_path = os.path.abspath(t_rel_path)
-        t_path_uri = 'file://{}'.format(t_abs_path)
+        template_uri = 'file://{}'.format(t_abs_path)
 
         output_rel_path = 'tests/templates/no_variables.txt'
         output_abs_path = os.path.abspath(output_rel_path)
-        output_path_uri = 'file://{}'.format(output_abs_path)
+        output_uri = 'file://{}'.format(output_abs_path)
 
         action = RenderTemplateAction(
             name='test',
-            template_path=t_path_uri,
-            output_path=output_path_uri
+            template_uri=template_uri,
+            output_uri=output_uri
         )
         action_runner = RenderTemplateRunner(action)
 

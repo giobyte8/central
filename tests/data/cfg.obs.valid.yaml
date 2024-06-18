@@ -43,8 +43,8 @@ actions:
 
   render_proxy_pass:
     type: render_template
-    template_path: file://data.dev/template_dev.jinja
-    output_path: file://data.dev/template_dev_out.txt
+    template_uri: file:///data.dev/template_dev.jinja
+    output_uri: file:///data.dev/template_dev_out.txt
 
   galleries_svc_stop:
     type: docker_ctr_stop

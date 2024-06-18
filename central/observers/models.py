@@ -43,8 +43,8 @@ class RedisListRPushAction(Action):
 
 
 class RenderTemplateAction(Action):
-    template_path: FileUrl
-    output_path: FileUrl
+    template_uri: FileUrl
+    output_uri: FileUrl
 
 
 class DockerCtrStartAction(Action):
