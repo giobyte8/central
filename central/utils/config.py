@@ -34,6 +34,9 @@ def rd_tg_notif_subscribed_chats() -> str:
 def queue_notif():
     return os.getenv('QUEUE_NOTIFICATIONS')
 
+def docker_api_path():
+    return os.getenv('DOCKER_API_PATH')
+
 
 def allowed_hosts():
     ids = os.getenv('ALLOWED_HOSTS', '')
