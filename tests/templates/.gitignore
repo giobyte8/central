@@ -1,4 +1,4 @@
 
 # Prevent rendered outputs from get into VCS
-index.html
+temperature.html
 no_variables.txt
