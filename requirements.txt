@@ -9,5 +9,4 @@ PyYAML==6.0.1
 pydantic==2.7.1
 python-dotenv==1.0.0
 Quart==0.19.3
-Quart-JWT-Extended==0.1.0
 quart-cors==0.7.0

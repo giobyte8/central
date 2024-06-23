@@ -42,9 +42,15 @@ def allowed_hosts():
     ids = os.getenv('ALLOWED_HOSTS', '')
     return ids.split()
 
+def api_key_rterminal() -> str:
+    """ Loads RTerminal API Key from env
 
-def api_jwt_secret_key():
-    return os.getenv('API_JWT_SECRET_KEY')
+    Currently using env to prevent hard-coding into app code.
+    As it scales to support multiple agents/users, keys storage
+    should be moved into a dedicated storage solution.
+    """
+    return os.getenv('API_KEY_RTERMINAL')
+
 
 def notif_feed_subs_pwd():
     return os.getenv('NOTIF_FEED_SUBSCRIPTION_PWD')
