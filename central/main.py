@@ -26,9 +26,11 @@ __ct_tasks = set()
 async def before_serving():
     bot_task = asyncio.create_task(tg_bot.start())
     notifier_task = asyncio.create_task(notifier.start())
+    observers_task = asyncio.create_task(observers_svc.start())
 
     __ct_tasks.add(bot_task)
     __ct_tasks.add(notifier_task)
+    __ct_tasks.add(observers_task)
 
 
 @ct_api_app.after_serving
@@ -50,7 +52,10 @@ async def main():
     #     #serve(ct_api_app, Config()),
     #     #ct_api_app.run_task(host='0.0.0.0', port=5000)
     # )
-    pass
+
+    await observers_svc.start()
+    while True:
+        await asyncio.sleep(10)
 
 
 if __name__ == '__main__':
@@ -65,4 +70,4 @@ if __name__ == '__main__':
     # Alternatively run all tasks into a custom coroutine
     # and start each task with asyncio.create_task() inside it.
     # See: https://docs.python.org/3/library/asyncio-task.html#running-tasks-concurrently
-    # ayncio.run(main())
+    # asyncio.run(main())
