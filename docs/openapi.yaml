@@ -4,7 +4,7 @@ info:
   title: Central API
   version: 1.0.0
 servers:
-  - url: http://localhost:6000/api
+  - url: http://localhost:5000/api
     description: Development Server
 paths:
   /notifications/subscriptions:
@@ -69,8 +69,7 @@ paths:
               example1:
                 summary: Minimal host status example
                 value:
-                  uptime: "3 days, 2 hours, 15 minutes"
-                  ip: "192.168.1.100"
+                  ipv4Public: "192.168.1.100"
       responses:
         '204':
           description: Successful operation
@@ -83,13 +82,9 @@ components:
     HostStatus:
       type: object
       required:
-        - uptime
-        - ip
+        - ipv4Public
       properties:
-        uptime:
-          type: string
-          description: The amount of time the system has been running.
-        ip:
+        ipv4Public:
           type: string
           format: ipv4
           description: External IPv4 address for the host.

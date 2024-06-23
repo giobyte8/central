@@ -113,7 +113,7 @@ async def stop():
 
 
 async def set_host_ip(host_id: UUID, ip: IPv4Address) -> None:
-    ip_key = f'{ REDIS_HOSTS_KEY }.{ host_id }.ip'
+    ip_key = f'{ REDIS_HOSTS_KEY }.{ host_id }.ipv4_public'
     await _redis.set(ip_key, str(ip))
 
 

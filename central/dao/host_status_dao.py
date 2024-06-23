@@ -4,4 +4,4 @@ from uuid import UUID
 
 
 async def save(host_id: UUID, status: HostStatus) -> None:
-    await redis_svc.set_host_ip(host_id, status.ip)
+    await redis_svc.set_host_ip(host_id, status.ipv4Public)
