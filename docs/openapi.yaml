@@ -1,12 +1,32 @@
-
 openapi: 3.0.0
 info:
   title: Central API
-  version: 1.0.0
+  version: 1.1.0
 servers:
   - url: http://localhost:5000/api
     description: Development Server
 paths:
+  /notifications:
+    post:
+      summary: Creates a new notification
+      description: |
+        Creates a new notification. It will be queued for delivery
+        through the configured channels for notifications.
+      requestBody:
+        description: Notification to deliver
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+            examples:
+              starting_rterminal:
+                value:
+                  title: Starting rterminal
+                  content: Starting rterminal agent on host <hostId>.
+      responses:
+        '201':
+          description: Notification was successfully queued for delivery
   /notifications/subscriptions:
     post:
       summary: Creates a new subscription to notifications feed
@@ -88,6 +108,18 @@ components:
           type: string
           format: ipv4
           description: External IPv4 address for the host.
+    Notification:
+      type: object
+      required:
+        - title
+        - content
+      properties:
+        title:
+          type: string
+          description: Notification's title
+        content:
+          type: string
+          description: Notification's body. Emojis are allowed here.
     NotifSubscription:
       type: object
       required:
