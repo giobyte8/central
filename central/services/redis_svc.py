@@ -1,4 +1,4 @@
-import aioredis
+import redis.asyncio as aioredis
 import central.utils.config as cfg
 import logging
 from abc import ABC, abstractmethod

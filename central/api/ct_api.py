@@ -4,8 +4,13 @@ from quart import Quart, request, jsonify
 from quart_cors import route_cors
 from quart.wrappers.response import Response
 
-from central.api.models import HostStatus, NotifSubscription
+from central.api.models import (
+    HostStatus,
+    Notification,
+    NotifSubscription
+)
 from central.notif import notif_subs_svc as nsubs_svc
+from central.notif.services import notifications as notif_svc
 from central.notif.errors import (
     NotifSubsAuthError,
     NotifSubsInvalidError,
@@ -32,6 +37,18 @@ async def update_host_status(host_id):
     status = HostStatus(**jStatus)
 
     await host_status_svc.update(host_id, status)
+    return '', 201
+
+@app.route('/api/notifications', methods=['POST'])
+@api_key_required()
+async def enqueue_notification():
+    jNotification = await request.get_json()
+    notification = Notification(**jNotification)
+
+    await notif_svc.enqueue(
+        notification.title,
+        notification.content
+    )
     return '', 201
 
 

@@ -1,4 +1,4 @@
-import aioredis
+import redis.asyncio as aioredis
 import asyncio
 import json
 import os
@@ -88,6 +88,6 @@ async def post_notif():
 
     print(f'Posting notif: {j_notif}')
     await _redis.rpush(rd_notif_q, j_notif)
-    await _redis.close()
+    await _redis.aclose()
 
 asyncio.run(post_notif())
