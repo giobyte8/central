@@ -1,6 +1,6 @@
 import logging
 from central.notif import notifier
-from central.notif.models import Notif
+from central.notif.models import Notif, NotifType
 from central.notif.notifier import NotifListener
 from central.telegram import api_client
 from central.telegram.models import TGResponseMsg
@@ -25,8 +25,15 @@ class TGNotifListener(NotifListener):
         logger.debug('Delivering notification to %d chats', len(chat_ids))
 
         for chat_id in chat_ids:
-            # TODO Consider using markdown for title and content
-            msg = TGResponseMsg(chat_id=chat_id, text=notif.content)
+            parse_mode = None
+            if notif.format is NotifType.MD:
+                parse_mode = 'MarkdownV2'
+
+            msg = TGResponseMsg(
+                chat_id=chat_id,
+                text=notif.content,
+                parse_mode=parse_mode
+            )
             await api_client.send_message(msg)
 
 

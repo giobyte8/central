@@ -30,6 +30,7 @@ docker run --rm                                                    \
     -v "${PARENT_DIR}/central/api":/mnt/central/api                \
     koxudaxi/datamodel-code-generator:latest                       \
         --capitalize-enum-members                                  \
+        --set-default-enum-member                                  \
         --input /mnt/openapi.yaml                                  \
         --input-file-type openapi                                  \
         --output-model-type pydantic_v2.BaseModel                  \

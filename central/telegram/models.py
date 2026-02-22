@@ -44,5 +44,8 @@ class TGResponseMsg(BaseModel):
     chat_id: int
     text: str
 
+    # None | MarkdownV2 | HTML
+    parse_mode: str | None = None
+
     # Should be a JSON serialized repr of 'TGInlineKeyboardMarkup'
     reply_markup: Optional[str] = None

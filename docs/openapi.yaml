@@ -120,6 +120,15 @@ components:
         content:
           type: string
           description: Notification's body. Emojis are allowed here.
+        format:
+          type: string
+          enum:
+            - text
+            - markdown
+          default: text
+          description: >
+            Notification content format.
+            Defaults to `text` when not specified.
     NotifSubscription:
       type: object
       required:

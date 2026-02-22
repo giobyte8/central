@@ -47,7 +47,8 @@ async def enqueue_notification():
 
     await notif_svc.enqueue(
         notification.title,
-        notification.content
+        notification.content,
+        notification.format.value,
     )
     return '', 201
 

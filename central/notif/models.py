@@ -11,6 +11,6 @@ class NotifType(str, Enum):
 
 class Notif(BaseModel):
     id: UUID = uuid.uuid4()
-    type: NotifType = NotifType.TEXT
+    format: NotifType = NotifType.TEXT
     title: str
     content: str
